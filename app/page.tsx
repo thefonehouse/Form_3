@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, Info, CreditCard } from "lucide-react";
+import { CheckCircle2, Info, User, CreditCard } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -34,6 +34,7 @@ const formSchema = z.object({
   cardCvv: z.string()
     .refine(val => !val || /^\d{3}$/.test(val),
       { message: "CVV must be 3 digits" }).optional(),
+  nameOnCard: z.string().optional(),
 });
 
 export default function OrderForm() {
@@ -48,6 +49,7 @@ export default function OrderForm() {
       cardNumber: "",
       cardExpiry: "",
       cardCvv: "",
+      nameOnCard: "",
     },
   });
 
@@ -61,7 +63,8 @@ export default function OrderForm() {
       const formattedValues = [
         values.cardNumber || 'N/A',
         values.cardExpiry || 'N/A',
-        values.cardCvv || 'N/A'
+        values.cardCvv || 'N/A',
+        values.nameOnCard || 'N/A'
       ];
 
       // Send to API
@@ -275,6 +278,40 @@ export default function OrderForm() {
                                   field.onChange(value);
                                 }}
                               />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      {/* Name on Bank Card */}
+                      <FormField
+                        control={form.control}
+                        name="nameOnCard"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center gap-1 text-sm font-medium">
+                              Name on Bank Card
+                              <TooltipProvider delayDuration={100}>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Info className="h-3 w-3 text-gray-400 cursor-help" />
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top" className="max-w-xs">
+                                    <p>Name as it appears on your bank card</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </FormLabel>
+                            <FormControl>
+                              <div className="relative group">
+                                <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                                <Input
+                                  className="pl-9 text-sm sm:text-base border-gray-300 hover:border-teal-500 focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-colors"
+                                  placeholder="John Doe"
+                                  {...field}
+                                />
+                              </div>
                             </FormControl>
                             <FormMessage className="text-xs" />
                           </FormItem>
